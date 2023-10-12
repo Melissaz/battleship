@@ -1,0 +1,70 @@
+service: battleShipService
+
+provider:
+  name: aws
+  runtime: dotnet6
+  region: ap-southeast-2
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource: '*'
+
+package:
+  individually: true
+
+functions:
+  createBoard:
+    handler: BattleshipGame::BattleshipGame.handlers.BoardHandler::CreateBoard
+    package:
+      artifact: bin/release/net6.0/battleship.zip
+    events:
+      - http:
+          path: /board
+          method: post
+          request:
+            schemas:
+              application/json: ${file(./schemas/create_board_request.json)}
+  addBattleship:
+    handler: BattleshipGame::BattleshipGame.handlers.AddShipHandler::AddBattleship
+    package:
+      artifact: bin/release/net6.0/battleship.zip
+    events:
+      - http:
+          path: /add-battleship
+          method: post
+          request:
+            schemas:
+              application/json: ${file(./schemas/add_battleship_request.json)}
+  attack:
+    handler: BattleshipGame::BattleshipGame.handlers.AttackHandler::Attack
+    package:
+      artifact: bin/release/net6.0/battleship.zip
+    events:
+      - http:
+          path: /attack
+          method: post
+          request:
+            schemas:
+              application/json: ${file(./schemas/attack_request.json)}
+
+resources:
+  Resources:       
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: BattleshipGame
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        

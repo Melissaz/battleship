@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "add_battleship_request",
+  "type": "object",
+  "properties": {
+    "GameId": {
+      "type": "string",
+      "description": "The ID of the game."
+    },
+    "PlayerId": {
+      "type": "string",
+      "description": "The ID of the player."
+    },
+    "StartX": {
+      "type": "integer"
+    },
+    "StartY": {
+      "type": "integer"
+    },
+    "Orientation": {
+      "type": "string",
+      "description": "horizontal or vertical"
+    }
+  },
+  "required": ["GameId", "PlayerId", "StartX", "StartY", "Orientation"]
+}
